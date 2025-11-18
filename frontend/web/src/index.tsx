@@ -3,13 +3,19 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { QueryProvider } from './providers/QueryProvider';
+import { AppProvider } from './contexts/AppContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <QueryProvider>
+      <AppProvider>
+        <App />
+      </AppProvider>
+    </QueryProvider>
   </React.StrictMode>
 );
 

@@ -35,6 +35,11 @@ interface Category {
   color: string;
 }
 
+interface HomePageProps {
+  onLoginClick?: () => void;
+  onDashboardClick?: () => void;
+}
+
 // --- SAMPLE DATA ---
 const categories: Category[] = [
   {
@@ -81,6 +86,86 @@ const categories: Category[] = [
   }
 ];
 
+// Dados para "Vistos Recentemente" conforme especificações
+const recentlyViewedProducts: Product[] = [
+  {
+    id: 'rv1',
+    name: 'Abóbora Japonesa',
+    price: 12.00,
+    image: 'https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=200&q=80',
+    category: 'Hortifruti',
+    rating: 4.5
+  },
+  {
+    id: 'rv2',
+    name: 'Abobrinha Italiana',
+    price: 50.00,
+    image: 'https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=200&q=80',
+    category: 'Hortifruti',
+    rating: 4.3
+  },
+  {
+    id: 'rv3',
+    name: 'Abobrinha Italiana',
+    price: 7.00,
+    image: 'https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=200&q=80',
+    category: 'Hortifruti',
+    rating: 4.3
+  },
+  {
+    id: 'rv4',
+    name: 'Açafrão Raiz',
+    price: 8.00,
+    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=200&q=80',
+    category: 'Temperos',
+    rating: 4.8
+  },
+  {
+    id: 'rv5',
+    name: 'Açafrão em pó',
+    price: 8.00,
+    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200&q=80',
+    category: 'Temperos',
+    rating: 4.7
+  }
+];
+
+// Dados para "Categorias em Destaque" conforme especificações
+const featuredCategories = [
+  {
+    id: 'hortifruti',
+    name: 'Hortifruti',
+    image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&q=80',
+    color: 'bg-green-50',
+    textColor: 'text-green-800',
+    subcategories: ['Cogumelos', 'Frutas', 'Legumes', 'Temperos', 'Verduras']
+  },
+  {
+    id: 'mercearia',
+    name: 'Mercearia',
+    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80',
+    color: 'bg-amber-50',
+    textColor: 'text-amber-800',
+    subcategories: ['Biscoitos', 'Bombonieri', 'Doces', 'Farinha Amarela', 'Farinha Branca', 'Feijão de Corda', 'Feijão Preto']
+  },
+  {
+    id: 'acougue',
+    name: 'Açougue',
+    image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&q=80',
+    color: 'bg-red-50',
+    textColor: 'text-red-800',
+    subcategories: ['Aves', 'Bovinos', 'Pescados', 'Suínos']
+  },
+  {
+    id: 'laticinios',
+    name: 'Laticínios',
+    image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&q=80',
+    color: 'bg-blue-50',
+    textColor: 'text-blue-800',
+    subcategories: ['Iogurtes', 'Leites e Cremes', 'Manteigas', 'Ovos', 'Queijos']
+  }
+];
+
 const featuredProducts: Product[] = [
   {
     id: '1',
@@ -123,7 +208,7 @@ const featuredProducts: Product[] = [
 
 // --- SUB-COMPONENTS ---
 
-const HeroSection = () => (
+const HeroSection = ({ onLoginClick, onDashboardClick }: { onLoginClick?: () => void; onDashboardClick?: () => void }) => (
   <section className="relative bg-gradient-to-r from-green-600 to-green-700 text-white py-16 md:py-24">
     <div className="container mx-auto px-6">
       <div className="flex flex-col md:flex-row items-center justify-between">
@@ -140,8 +225,17 @@ const HeroSection = () => (
               <ShoppingBag className="w-6 h-6" />
               Começar a Comprar
             </button>
-            <button className="border-2 border-white hover:bg-white hover:text-green-700 px-8 py-4 rounded-2xl font-semibold text-lg transition-colors">
-              Ver Produtos
+            <button 
+              onClick={onLoginClick}
+              className="border-2 border-white hover:bg-white hover:text-green-700 px-8 py-4 rounded-2xl font-semibold text-lg transition-colors"
+            >
+              Fazer Login
+            </button>
+            <button 
+              onClick={onDashboardClick}
+              className="bg-green-800 hover:bg-green-900 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-colors"
+            >
+              Painel do Cliente
             </button>
           </div>
         </div>
@@ -333,6 +427,106 @@ const PromotionsSection = () => (
   </section>
 );
 
+// Componente para "Vistos Recentemente"
+const RecentlyViewedSection = () => (
+  <section className="py-16 bg-gray-50">
+    <div className="container mx-auto px-6">
+      <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-800">
+        Vistos Recentemente
+      </h2>
+      
+      {/* Scroll horizontal para produtos */}
+      <div className="relative">
+        <div className="flex gap-6 overflow-x-auto pb-4 scroll-smooth">
+          {recentlyViewedProducts.map((product) => (
+            <div 
+              key={product.id}
+              className="flex-none w-64 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden group cursor-pointer"
+            >
+              <div className="relative">
+                <img 
+                  src={product.image} 
+                  alt={product.name}
+                  className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <div className="p-4">
+                <h3 className="font-semibold text-lg mb-2 text-gray-800">{product.name}</h3>
+                <div className="flex items-center justify-between">
+                  <span className="text-xl font-bold text-green-600">
+                    R$ {product.price.toFixed(2).replace('.', ',')} {product.id === 'rv1' ? '/ Kg' : product.id === 'rv2' ? '/ Caixa' : '/ g'}
+                  </span>
+                  <button 
+                    className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg transition-colors"
+                    aria-label="Adicionar ao carrinho"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Indicadores de scroll para mobile */}
+        <div className="flex justify-center mt-4 md:hidden">
+          <div className="flex gap-2">
+            {recentlyViewedProducts.map((_, index) => (
+              <div key={index} className="w-2 h-2 rounded-full bg-gray-300"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+// Componente para "Categorias em Destaque"
+const FeaturedCategoriesSection = () => (
+  <section className="py-16">
+    <div className="container mx-auto px-6">
+      <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-800">
+        Categorias em Destaque
+      </h2>
+      
+      {/* Grid responsivo para categorias */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {featuredCategories.map((category) => (
+          <div 
+            key={category.id}
+            className={`${category.color} rounded-3xl p-6 hover:shadow-xl transition-shadow cursor-pointer group`}
+          >
+            <div className="flex flex-col h-full">
+              <div className="relative mb-4">
+                <img 
+                  src={category.image} 
+                  alt={category.name}
+                  className="w-full h-32 object-cover rounded-2xl group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              
+              <h3 className={`text-2xl font-bold mb-4 ${category.textColor}`}>
+                {category.name}
+              </h3>
+              
+              <div className="flex-1">
+                <ul className="space-y-2">
+                  {category.subcategories.map((subcategory, index) => (
+                    <li key={index} className={`text-sm ${category.textColor} opacity-80 hover:opacity-100 cursor-pointer transition-opacity`}>
+                      {subcategory}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
 const NewsletterSection = () => (
   <section className="py-16 bg-gray-900 text-white">
     <div className="container mx-auto px-6">
@@ -365,13 +559,15 @@ const NewsletterSection = () => (
 
 // --- MAIN COMPONENT ---
 
-export const HomePage = () => {
+export const HomePage: React.FC<HomePageProps> = ({ onLoginClick, onDashboardClick }) => {
   return (
     <div className="min-h-screen bg-white">
-      <HeroSection />
+      <HeroSection onLoginClick={onLoginClick} onDashboardClick={onDashboardClick} />
       <CategoriesSection />
       <FeaturedSection />
       <PromotionsSection />
+      <RecentlyViewedSection />
+      <FeaturedCategoriesSection />
       <NewsletterSection />
     </div>
   );

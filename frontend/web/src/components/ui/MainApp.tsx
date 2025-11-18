@@ -4,16 +4,18 @@ import HomePage from './HomePage';
 import Footer from './Footer';
 import MyAccountLayout from './MyAccountLayout';
 import AuthPageNavigator from './auth-navigator';
+import { useAppContext } from '../../contexts/AppContext';
+import { useLogout } from '../../hooks/useAuth';
 
-type AppMode = 'home' | 'auth' | 'account';
+type AppMode = 'home' | 'auth' | 'account' | 'login' | 'dashboard';
 
 const MainApp = () => {
   const [appMode, setAppMode] = useState<AppMode>('home');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [cartItemCount] = useState(3); // Simulando itens no carrinho
+  const { state } = useAppContext();
+  const { logout } = useLogout();
 
   const handleAuthClick = () => {
-    if (isAuthenticated) {
+    if (state.isAuthenticated) {
       setAppMode('account');
     } else {
       setAppMode('auth');
@@ -21,12 +23,11 @@ const MainApp = () => {
   };
 
   const handleAuthSuccess = () => {
-    setIsAuthenticated(true);
     setAppMode('account');
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    logout();
     setAppMode('home');
   };
 
@@ -34,11 +35,25 @@ const MainApp = () => {
     setAppMode('home');
   };
 
+  const handleLoginClick = () => {
+    setAppMode('auth');
+  };
+
+  const handleDashboardClick = () => {
+    setAppMode('dashboard');
+  };
+
   const renderContent = () => {
     switch (appMode) {
       case 'home':
-        return <HomePage />;
+        return (
+          <HomePage 
+            onLoginClick={handleLoginClick}
+            onDashboardClick={handleDashboardClick}
+          />
+        );
       case 'auth':
+      case 'login':
         return (
           <div className="min-h-screen">
             <AuthPageNavigator 
@@ -48,6 +63,7 @@ const MainApp = () => {
           </div>
         );
       case 'account':
+      case 'dashboard':
         return (
           <MyAccountLayout 
             onLogout={handleLogout}
@@ -59,15 +75,18 @@ const MainApp = () => {
     }
   };
 
-  const showHeaderFooter = appMode !== 'auth';
+  const showHeaderFooter = appMode !== 'auth' && appMode !== 'login';
 
   return (
     <div className="min-h-screen bg-white">
       {showHeaderFooter && (
         <Header 
-          cartItemCount={cartItemCount}
-          isAuthenticated={isAuthenticated}
+          cartItemCount={state.cartCount}
+          isAuthenticated={state.isAuthenticated}
           onAuthClick={handleAuthClick}
+          onLoginClick={handleLoginClick}
+          onDashboardClick={handleDashboardClick}
+          onHomeClick={handleHomeClick}
         />
       )}
       
